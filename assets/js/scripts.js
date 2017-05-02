@@ -137,7 +137,7 @@ jQuery(function ($) {
     // Progress Bar
     // -------------------------------------------------------------
 
-    $('.contact-section').bind('inview', function (event, visible, visiblePartX, visiblePartY) {
+    $('#contact-form-container').bind('inview', function (event, visible, visiblePartX, visiblePartY) {
         if (visible) {
             $('#name').focus();
         }
