@@ -46,7 +46,7 @@ jQuery(function ($) {
             var anchor = $(this);
             $('html, body').stop().animate({
                 scrollTop: $(anchor.attr('href')).offset().top
-            }, 1000);
+            }, 500);
             e.preventDefault();
         });
     }());
@@ -107,7 +107,7 @@ jQuery(function ($) {
             $(this).find('.timer').each(function () {
                 var $this = $(this);
                 $({ Counter: 0 }).animate({ Counter: $this.text() }, {
-                    duration: 2000,
+                    duration: 1000,
                     easing: 'swing',
                     step: function () {
                         $this.text(Math.ceil(this.Counter));
@@ -132,6 +132,17 @@ jQuery(function ($) {
         }
     });
 
+
+    // -------------------------------------------------------------
+    // Progress Bar
+    // -------------------------------------------------------------
+
+    $('.contact-section').bind('inview', function (event, visible, visiblePartX, visiblePartY) {
+        if (visible) {
+            $('#name').focus();
+        }
+    });
+
     // -------------------------------------------------------------
     // More skill
     // -------------------------------------------------------------
@@ -140,13 +151,13 @@ jQuery(function ($) {
             $('.chart').easyPieChart({
                 //your configuration goes here
                 easing: 'easeOut',
-                delay: 3000,
+                delay: 2000,
                 barColor: '#68c3a3',
                 trackColor: 'rgba(255,255,255,0.2)',
                 scaleColor: false,
                 lineWidth: 8,
                 size: 140,
-                animate: 2000,
+                animate: 1000,
                 onStep: function (from, to, percent) {
                     this.el.children[0].innerHTML = Math.round(percent);
                 }
@@ -261,32 +272,37 @@ jQuery(function ($) {
 
         e.preventDefault();
 
+        $('#pre-status').fadeIn();
+        $('#tt-preloader').delay(350).fadeIn('slow');
+
         var $action = $(this).prop('action');
         var $data = $(this).serialize();
         var $this = $(this);
 
         $this.prevAll('.alert').remove();
 
-        $.post($action, $data, function (data) {
+        $.post($action, $data, function (data, type, res) {
 
-            if (data.response == 'error') {
+            if (res.status == 200) {
 
-                $this.before('<div class="alert alert-danger">' + data.message + '</div>');
-            }
-
-            if (data.response == 'success') {
-
-                $this.before('<div class="alert alert-success">' + data.message + '</div>');
+                $this.before('<div class="alert alert-success">Thank you for getting in touch! <br>I appreciate you contacting me. I will try to respond as soon as possible. <br>Have a great day ahead! </div>');
                 $this.find('input, textarea').val('');
+
+            } else if (res.status > 400) {
+                $this.before('<div class="alert alert-danger">Sorry - something did not go through! Please check your network connection and try again.</div>');
+            } else {
+                $this.before('<div class="alert alert-danger">Sorry - something did not go through! </div>');
             }
+
+            $('html, body').stop().animate({
+                scrollTop: $('#contact-form-container').offset().top
+            }, 500);
+
+            $('#pre-status').fadeOut();
+            $('#tt-preloader').delay(350).fadeOut('slow');
 
         }, "json");
 
     });
 
 });
-
-
-
-
-
